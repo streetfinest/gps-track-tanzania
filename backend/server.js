@@ -6,12 +6,14 @@ require("dotenv").config();
 
 const adminRoutes = require("./routes/adminRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
+const featureRoutes = require("./routes/featureRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const workRoutes = require("./routes/workRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
-const featureRoutes = require("./routes/featureRoutes");
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 app.use(cors());
 app.use(express.json());
@@ -25,10 +27,10 @@ app.get("/", (req, res) => {
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/consultations", consultationRoutes);
+app.use("/api/features", featureRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/works", workRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/features", featureRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/gps_tracking";

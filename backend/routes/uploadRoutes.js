@@ -28,8 +28,15 @@ const worksUpload = multer({ storage: worksStorage });
 
 function getMediaType(filename) {
   const ext = path.extname(filename).toLowerCase();
-  const videoExtensions = [".mp4", ".mov", ".webm", ".ogg"];
+  const videoExtensions = [".mp4", ".mov", ".webm", ".ogg", ".m4v"];
   return videoExtensions.includes(ext) ? "video" : "image";
+}
+
+function getBaseUrl(req) {
+  const host = req.get("host");
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  const protocol = forwardedProto ? forwardedProto.split(",")[0] : "https";
+  return `${protocol}://${host}`;
 }
 
 router.post("/team-media", teamUpload.array("files", 20), (req, res) => {
@@ -37,8 +44,10 @@ router.post("/team-media", teamUpload.array("files", 20), (req, res) => {
     return res.status(400).json({ message: "No files uploaded" });
   }
 
+  const baseUrl = getBaseUrl(req);
+
   const files = req.files.map((file) => ({
-    url: `http://localhost:5000/uploads/team/${file.filename}`,
+    url: `${baseUrl}/uploads/team/${file.filename}`,
     type: getMediaType(file.originalname)
   }));
 
@@ -53,8 +62,10 @@ router.post("/work-media", worksUpload.array("files", 20), (req, res) => {
     return res.status(400).json({ message: "No files uploaded" });
   }
 
+  const baseUrl = getBaseUrl(req);
+
   const files = req.files.map((file) => ({
-    url: `http://localhost:5000/uploads/works/${file.filename}`,
+    url: `${baseUrl}/uploads/works/${file.filename}`,
     type: getMediaType(file.originalname)
   }));
 
